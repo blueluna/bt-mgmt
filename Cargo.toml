@@ -1,0 +1,13 @@
+[package]
+name = "bt-mgmt"
+version = "0.0.1"
+authors = ["Erik Svensson <erik.public@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+libc = "0.2"
+byteorder = "1.3"
+bitflags =  "1.2"
+
+[dev-dependencies]
+mio = { version = "0.7", features = ["os-poll", "os-util"] }
