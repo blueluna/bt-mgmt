@@ -30,11 +30,11 @@ pub(crate) fn hci_socket() -> io::Result<RawFd> {
     )))
 }
 
-const HCI_CHANNEL_RAW: u16 = 0;
-const HCI_CHANNEL_USER: u16 = 1;
-const HCI_CHANNEL_MONITOR: u16 = 2;
-const HCI_CHANNEL_CONTROL: u16 = 3;
-const HCI_CHANNEL_LOGGING: u16 = 4;
+pub const HCI_CHANNEL_RAW: u16 = 0;
+pub const HCI_CHANNEL_USER: u16 = 1;
+pub const HCI_CHANNEL_MONITOR: u16 = 2;
+pub const HCI_CHANNEL_CONTROL: u16 = 3;
+pub const HCI_CHANNEL_LOGGING: u16 = 4;
 
 pub(crate) fn bind(socket: RawFd, address: &Address) -> io::Result<()> {
     let addr_ptr: *const Address = address;

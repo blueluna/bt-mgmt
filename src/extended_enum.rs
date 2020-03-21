@@ -9,15 +9,6 @@ macro_rules! extended_enum {
             $($var,)*
         }
 
-        impl From<$ty> for $name {
-            fn from(v: $ty) -> Self {
-                match v {
-                    $( $val => $name::$var,)*
-                    _ => panic!("Bad Value"),
-                }
-            }
-        }
-
         impl From<$name> for $ty {
             fn from(v: $name) -> Self {
                 match v {
@@ -30,6 +21,17 @@ macro_rules! extended_enum {
             fn eq(&self, other: &$name) -> bool {
                 match *other {
                     $( $name::$var => *self == $val, )*
+                }
+            }
+        }
+
+        impl TryFrom<$ty> for $name {
+            type Error = crate::error::Error;
+
+            fn try_from(value: $ty) -> Result<Self, Self::Error> {
+                match value {
+                    $( $val => Ok($name::$var),)*
+                    _ => Err(Self::Error::from(crate::error::HciError::new(crate::error::HciErrorKind::InvalidValue))),
                 }
             }
         }

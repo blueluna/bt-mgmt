@@ -33,11 +33,21 @@ extended_enum_other!(Event, u16,
     DeviceUnblocked => 0x0015,
     DeviceUnpaired => 0x0016,
     PasskeyNotify => 0x0017,
-    NewIrk => 0x0018,
-    NewCrk => 0x0019,
+    NewIdentityResolvingKey => 0x0018,
+    NewConnectionSignatureResolvingKey => 0x0019,
     DeviceAdded => 0x001a,
     DeviceRemoved => 0x001b,
     NewConnectionParameters => 0x001c,
+    UnconfirmedIndexAdded => 0x001d,
+    UnconfirmedIndexRemoved => 0x001e,
+    NewConfigurationOptions => 0x001f,
+    ExtendedIndexAdded => 0x0020,
+    ExtendedIndexRemoved => 0x0021,
+    LocalOutOfBandDataUpdated => 0x0022,
+    AdvertisingAdded => 0x0023,
+    AdvertisingRemoved => 0x0024,
+    ExtendedInformationChanged => 0x0025,
+    PhyConfigurationChanged => 0x0026,
 );
 
 extended_enum_other!(Status, u8,
@@ -83,7 +93,7 @@ impl Socket {
         let end = MGMT_HEADER_SIZE + data.len();
         assert!(end < MGMT_BUFFER_SIZE);
         let mut buffer = [0u8; MGMT_BUFFER_SIZE];
-        &buffer[MGMT_HEADER_SIZE..end].copy_from_slice(data);
+        buffer[MGMT_HEADER_SIZE..end].copy_from_slice(data);
         LittleEndian::write_u16(&mut buffer[0..2], opcode);
         LittleEndian::write_u16(&mut buffer[2..4], index);
         let size = data.len() as u16;
@@ -100,9 +110,9 @@ impl Socket {
         if read < MGMT_HEADER_SIZE {
             return Err(Error::Hci(HciError::new(HciErrorKind::NotEnoughData)));
         }
-        let event = Event::from(LittleEndian::read_u16(&mut buffer[0..2]));
-        let index = LittleEndian::read_u16(&mut buffer[2..4]);
-        let size = LittleEndian::read_u16(&mut buffer[4..6]) as usize;
+        let event = Event::from(LittleEndian::read_u16(&buffer[0..2]));
+        let index = LittleEndian::read_u16(&buffer[2..4]);
+        let size = LittleEndian::read_u16(&buffer[4..6]) as usize;
         data[..size].copy_from_slice(&buffer[MGMT_HEADER_SIZE..MGMT_HEADER_SIZE + size]);
         Ok((size, event, index))
     }

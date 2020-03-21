@@ -1,6 +1,5 @@
-
+use crate::{error::HciError, error::HciErrorKind, pack::UnpackFixed, Error};
 use bitflags;
-use crate::{Error, error::HciError, error::HciErrorKind, pack::UnpackFixed};
 
 bitflags!(
     struct Type: u8 {
@@ -19,8 +18,7 @@ pub struct Discovering {
 }
 
 impl UnpackFixed<Discovering, Error> for Discovering {
-    fn unpack(data: &[u8]) -> Result<Discovering, Error>
-    {
+    fn unpack(data: &[u8]) -> Result<Discovering, Error> {
         assert!(data.len() == 2);
         let discovery_type = match Type::from_bits(data[0]) {
             Some(v) => v,
@@ -31,6 +29,9 @@ impl UnpackFixed<Discovering, Error> for Discovering {
             0x01 => true,
             _ => return Err(Error::from(HciError::new(HciErrorKind::InvalidValue))),
         };
-        Ok(Discovering { discovery_type, discovering })
+        Ok(Discovering {
+            discovery_type,
+            discovering,
+        })
     }
 }

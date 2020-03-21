@@ -1,10 +1,9 @@
-/// Extended Inquiry Response (EIR)
-/// 
-/// 
-
-
-use crate::{Error, error::HciError, error::HciErrorKind, pack::Unpack};
 use crate::extended_enum_other;
+/// Extended Inquiry Response (EIR)
+///
+///
+// use byteorder::{ByteOrder, LittleEndian};
+use crate::{error::HciError, error::HciErrorKind, Error};
 
 extended_enum_other!(DataType, u8,
     Flags => 0x01,
@@ -17,23 +16,27 @@ extended_enum_other!(DataType, u8,
     ShortenedLocalName => 0x08,
     CompleteLocalName => 0x09,
     TxPowerLevel => 0x0a,
+    ServiceData16BitUUIDs => 0x16,
+    Appearance => 0x19,
+    ManufacturerData => 0xff,
 );
 
-struct EirEntry<'a> {
-    data_type: DataType,
-    data: &'a[u8]
+pub struct EirEntry<'a> {
+    pub data_type: DataType,
+    pub data: &'a [u8],
 }
 
 impl<'a> EirEntry<'a> {
-    fn unpack(data: &'a[u8]) -> Result<(EirEntry<'a>, usize), Error> {
+    pub fn unpack(data: &'a [u8]) -> Result<(EirEntry<'a>, usize), Error> {
         if data.len() < 2 {
             return Err(Error::from(HciError::new(HciErrorKind::NotEnoughData)));
         }
         let length = usize::from(data[0]);
-        if data.len() < length + 2 {
+        if data.len() < length + 1 {
             return Err(Error::from(HciError::new(HciErrorKind::NotEnoughData)));
         }
         let data_type = DataType::from(data[1]);
-        Ok((EirEntry{ data_type, data: &data[..length]}, length + 2))
+        let data = if length > 1 { &data[2..=length] } else { &[] };
+        Ok((EirEntry { data_type, data }, length + 1))
     }
 }
