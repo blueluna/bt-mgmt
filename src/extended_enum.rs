@@ -4,7 +4,7 @@
 macro_rules! extended_enum {
     ( $name:ident, $ty:ty, $( $var:ident => $val:expr ),+ $(,)* ) => (
 
-        #[derive(Clone,Debug,Eq,PartialEq)]
+        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
         pub enum $name {
             $($var,)*
         }
@@ -43,7 +43,7 @@ macro_rules! extended_enum_other {
     ( $name:ident, $ty:ty,
       $( $var:ident => $val:expr ),+ $(,)* ) => (
 
-        #[derive(Clone,Debug,Eq,PartialEq)]
+        #[derive(Clone, Copy, Debug, Eq, PartialEq)]
         pub enum $name {
             $($var,)*
             Other($ty),

@@ -2,12 +2,7 @@ use std::os::unix::io::AsRawFd;
 
 use mio::{unix::SourceFd, Events, Interest, Poll, Token};
 
-use bt_mgmt::{
-    eir::EirEntry,
-    events::{DeviceFound, Discovering},
-    pack::UnpackFixed,
-    Error, Event, Socket,
-};
+use bt_mgmt::{eir::EirEntry, events::Event, Error, Socket};
 
 const MGMT_EVENTS: Token = Token(0);
 
@@ -27,17 +22,16 @@ fn main() -> Result<(), Error> {
             match event.token() {
                 MGMT_EVENTS => {
                     let (size, event, index) = mgmt.receive_event(&mut buffer)?;
+                    let (event, _) = Event::unpack(event, &buffer[..size])?;
                     let hex: String = buffer[..size]
                         .iter()
                         .map(|i| format!("{:02x}", i))
                         .collect();
                     match event {
-                        Event::Discovering => {
-                            let event = Discovering::unpack(&buffer[..size])?;
+                        Event::Discovering(event) => {
                             println!("Event {} {:?}", index, event);
                         }
-                        Event::DeviceFound => {
-                            let (event, _) = DeviceFound::unpack(&buffer[..size])?;
+                        Event::DeviceFound(event) => {
                             print!(
                                 "Event {} Device found {} {:08x}",
                                 index, event.rssi, event.flags
@@ -50,6 +44,13 @@ fn main() -> Result<(), Error> {
                                 offset += used;
                             }
                             println!();
+                        }
+                        Event::ClassOfDeviceChanged(event) => {
+                            let device_class = event.device_class();
+                            println!(
+                                "Event {} device class changed {:?}",
+                                index, device_class
+                            );
                         }
                         _ => {
                             println!("Event {} {:?} ({}) {}", index, event, size, hex);

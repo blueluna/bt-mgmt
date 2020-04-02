@@ -2,7 +2,7 @@ use byteorder::{ByteOrder, LittleEndian};
 
 use crate::{error::HciError, error::HciErrorKind, pack::UnpackFixed, AddressInfo, Error};
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct DeviceFound<'a> {
     pub address_info: AddressInfo,
     pub rssi: i8,

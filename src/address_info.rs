@@ -16,14 +16,14 @@ extended_enum!(
     LeRandom => 0x02,
 );
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct AddressInfo {
     pub address: HardwareAddress,
     pub address_type: AddressType,
 }
 
-impl UnpackFixed<AddressInfo, Error> for AddressInfo {
-    fn unpack(data: &[u8]) -> Result<AddressInfo, Error> {
+impl<'a> UnpackFixed<'a, AddressInfo, Error> for AddressInfo {
+    fn unpack(data: &'a [u8]) -> Result<AddressInfo, Error> {
         if data.len() != 7 {
             return Err(Error::from(HciError::new(HciErrorKind::NotEnoughData)));
         }

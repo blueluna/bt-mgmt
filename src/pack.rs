@@ -9,9 +9,9 @@ pub trait PackFixed<T, E> {
 }
 
 /// Unpacking of data of fixed size
-pub trait UnpackFixed<T, E> {
+pub trait UnpackFixed<'a, T, E> {
     /// De-serialise from buffer, returning object or error
-    fn unpack(data: &[u8]) -> Result<T, E>;
+    fn unpack(data: &'a [u8]) -> Result<T, E>;
 }
 
 /// Packing of data with variable size
@@ -21,8 +21,8 @@ pub trait Pack<T, E> {
 }
 
 /// Unpacking of data with variable size
-pub trait Unpack<T, E> {
+pub trait Unpack<'a, T, E> {
     /// De-serialise from buffer, returning object and number of bytes used
     /// or error
-    fn unpack(data: &[u8]) -> Result<(T, usize), E>;
+    fn unpack(data: &'a [u8]) -> Result<(T, usize), E>;
 }
