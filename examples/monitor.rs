@@ -33,8 +33,8 @@ fn main() -> Result<(), Error> {
                         }
                         Event::DeviceFound(event) => {
                             print!(
-                                "Event {} Device found {} {:08x}",
-                                index, event.rssi, event.flags
+                                "Event {} Device found {} {} {:08x}",
+                                index, event.address_info, event.rssi, event.flags
                             );
                             let length = event.data.len();
                             let mut offset = 0usize;

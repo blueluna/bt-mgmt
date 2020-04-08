@@ -1,3 +1,4 @@
+use std::fmt;
 use std::convert::TryFrom;
 
 use crate::extended_enum;
@@ -16,6 +17,20 @@ extended_enum!(
     LeRandom => 0x02,
 );
 
+impl fmt::Display for AddressType {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(
+            f,
+            "{:6}",
+            match self {
+                AddressType::BrEdr => "BR/EDR",
+                AddressType::LePublic => "LE",
+                AddressType::LeRandom => "LE",
+            }
+        )
+    }
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct AddressInfo {
     pub address: HardwareAddress,
@@ -33,5 +48,11 @@ impl<'a> UnpackFixed<'a, AddressInfo, Error> for AddressInfo {
             address,
             address_type,
         })
+    }
+}
+
+impl fmt::Display for AddressInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{} {}", self.address, self.address_type)
     }
 }

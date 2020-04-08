@@ -16,7 +16,7 @@ pub struct CommandComplete<'a> {
 impl<'a> Unpack<'a, CommandComplete<'a>, Error> for CommandComplete<'a> {
     fn unpack(data: &'a [u8]) -> Result<(CommandComplete<'a>, usize), Error> {
         if data.len() < 3 {
-            return Err(Error::from(HciError::new(HciErrorKind::NotEnoughData)));
+            return Err(HciError::new(HciErrorKind::NotEnoughData).into());
         }
         let mut offset = 0;
         let operation = LittleEndian::read_u16(&data[offset..offset + 2]);
