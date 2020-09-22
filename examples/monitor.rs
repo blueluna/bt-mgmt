@@ -2,7 +2,15 @@ use std::os::unix::io::AsRawFd;
 
 use mio::{unix::SourceFd, Events, Interest, Poll, Token};
 
-use bt_mgmt::{eir::EirEntry, events::Event, Error, Socket};
+use byteorder::{ByteOrder, LittleEndian};
+
+use bt_mgmt::{
+    self,
+    eir::{self, EirEntry},
+    events::Event,
+    pack::UnpackFixed,
+    Error, Socket,
+};
 
 const MGMT_EVENTS: Token = Token(0);
 
@@ -33,24 +41,54 @@ fn main() -> Result<(), Error> {
                         }
                         Event::DeviceFound(event) => {
                             print!(
-                                "Event {} Device found {} {} {:08x}",
+                                "Event {} Device found {} {:4} {:08x}",
                                 index, event.address_info, event.rssi, event.flags
                             );
                             let length = event.data.len();
                             let mut offset = 0usize;
                             while offset < length {
                                 let (eir, used) = EirEntry::unpack(&event.data[offset..])?;
-                                print!(" {:?} ({})", eir.data_type, eir.data.len());
+                                match eir.data_type {
+                                    eir::DataType::Flags => {
+                                        print!(" flags {:02x}", eir.data[0]);
+                                    }
+                                    eir::DataType::TxPowerLevel => {
+                                        print!(" power {}", eir.data[0] as i8);
+                                    }
+                                    eir::DataType::ManufacturerData => {
+                                        print!(" mfg");
+                                    }
+                                    eir::DataType::Appearance => {
+                                        let appearance = LittleEndian::read_u16(&eir.data[0..1]);
+                                        let appearance = bt_mgmt::Appearance::from(appearance);
+                                        print!(" appearance {:?}", appearance);
+                                    }
+                                    eir::DataType::ClassOfDevice => {
+                                        let cod = bt_mgmt::ClassOfDevice::unpack(&eir.data[..3])?;
+                                        print!(" class {:?}", cod.device_class());
+                                    }
+                                    eir::DataType::ShortenedLocalName
+                                    | eir::DataType::CompleteLocalName => {
+                                        match std::str::from_utf8(eir.data) {
+                                            Ok(name) => {
+                                                print!(" name {:?}", name);
+                                            }
+                                            Err(_) => {
+                                                print!(" invalid name");
+                                            }
+                                        }
+                                    }
+                                    _ => {
+                                        print!(" {:?} ({})", eir.data_type, eir.data.len());
+                                    }
+                                }
                                 offset += used;
                             }
                             println!();
                         }
                         Event::ClassOfDeviceChanged(event) => {
                             let device_class = event.device_class();
-                            println!(
-                                "Event {} device class changed {:?}",
-                                index, device_class
-                            );
+                            println!("Event {} device class changed {:?}", index, device_class);
                         }
                         _ => {
                             println!("Event {} {:?} ({}) {}", index, event, size, hex);

@@ -3,7 +3,7 @@ use bitflags;
 
 bitflags!(
     struct Type: u8 {
-        const BE_EDR = 0b0001;
+        const BR_EDR = 0b0001;
         const LE_PUBLIC = 0b0010;
         const LE_RANDOM = 0b0100;
     }

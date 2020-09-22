@@ -21,7 +21,7 @@ pub use system::{
 };
 
 pub use address_info::AddressInfo;
-pub use common::ClassOfDevice;
+pub use common::{Appearance, ClassOfDevice};
 pub use error::Error;
 pub use hardware_address::HardwareAddress;
 pub use operations::OperationId;

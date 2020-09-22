@@ -73,3 +73,11 @@ impl<'a> EirEntry<'a> {
         Ok((EirEntry { data_type, data }, length + 1))
     }
 }
+
+pub struct Flags {
+    le_limited_discoverable_mode: bool,
+    le_general_discoverable_mode: bool,
+    bredr_not_supported: bool,
+    simultanious_le_bredr_controller: bool,
+    simultanious_le_bredr_host: bool,
+}

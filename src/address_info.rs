@@ -1,5 +1,5 @@
-use std::fmt;
 use std::convert::TryFrom;
+use std::fmt;
 
 use crate::extended_enum;
 use crate::hardware_address::HardwareAddress;
@@ -24,8 +24,8 @@ impl fmt::Display for AddressType {
             "{:6}",
             match self {
                 AddressType::BrEdr => "BR/EDR",
-                AddressType::LePublic => "LE",
-                AddressType::LeRandom => "LE",
+                AddressType::LePublic => "LE PUB",
+                AddressType::LeRandom => "LE RND",
             }
         )
     }
