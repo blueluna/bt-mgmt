@@ -1,4 +1,5 @@
 use std::os::unix::io::AsRawFd;
+use std::fmt;
 
 use mio::{unix::SourceFd, Events, Interest, Poll, Token};
 
@@ -59,9 +60,23 @@ fn main() -> Result<(), Error> {
                                         print!(" mfg");
                                     }
                                     eir::DataType::Appearance => {
-                                        let appearance = LittleEndian::read_u16(&eir.data[0..1]);
-                                        let appearance = bt_mgmt::Appearance::from(appearance);
-                                        print!(" appearance {:?}", appearance);
+                                        if eir.data.len() == 2 {
+                                            let appearance_identifier = LittleEndian::read_u16(&eir.data[0..2]);
+                                            let appearance = bt_mgmt::Appearance::from(appearance_identifier);
+                                            match appearance {
+                                                bt_mgmt::Appearance::Reserved => {
+                                                    fmt::format(format_args!("Hello, {}!", "world"));
+                                                    print!(" appearance reserved {:04x}", appearance_identifier);
+                                                }
+                                                _ => {
+                                                    print!(" appearance {:?}", appearance);
+                                                }
+                                            }
+                                            
+                                        }
+                                        else {
+                                            print!(" appearance {}", eir.data.len());
+                                        }
                                     }
                                     eir::DataType::ClassOfDevice => {
                                         let cod = bt_mgmt::ClassOfDevice::unpack(&eir.data[..3])?;
@@ -76,6 +91,20 @@ fn main() -> Result<(), Error> {
                                             Err(_) => {
                                                 print!(" invalid name");
                                             }
+                                        }
+                                    }
+                                    eir::DataType::IncompleteServiceClassUUIDs16 | eir::DataType::CompleteServiceClassUUIDs16 => {
+                                        print!(" UUID");
+                                        for chunk in eir.data.chunks_exact(2) {
+                                            let uuid = LittleEndian::read_u16(chunk);
+                                            print!(" {:04x}", uuid);
+                                        }
+                                    }
+                                    eir::DataType::IncompleteServiceClassUUIDs32 | eir::DataType::CompleteServiceClassUUIDs32 => {
+                                        print!(" UUID");
+                                        for chunk in eir.data.chunks_exact(4) {
+                                            let uuid = LittleEndian::read_u32(chunk);
+                                            print!(" {:08x}", uuid);
                                         }
                                     }
                                     _ => {
