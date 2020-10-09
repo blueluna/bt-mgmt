@@ -13,7 +13,7 @@ use crate::{
 
 pub use command::{CommandComplete, CommandStatus};
 pub use device_found::DeviceFound;
-pub use discovering::Discovering;
+pub use discovering::{Discovering, DiscoveringType};
 
 use bitflags;
 

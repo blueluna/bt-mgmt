@@ -23,13 +23,18 @@ impl Socket {
         Ok(Socket { socket })
     }
 
-    pub fn send_command(&mut self, opcode: u16, index: u16, data: &[u8]) -> Result<usize> {
+    pub fn send_command<T: Into<u16>>(
+        &mut self,
+        opcode: T,
+        index: u16,
+        data: &[u8],
+    ) -> Result<usize> {
         assert!(data.len() < u16::max_value() as usize);
         let end = MGMT_HEADER_SIZE + data.len();
         assert!(end < MGMT_BUFFER_SIZE);
         let mut buffer = [0u8; MGMT_BUFFER_SIZE];
         buffer[MGMT_HEADER_SIZE..end].copy_from_slice(data);
-        LittleEndian::write_u16(&mut buffer[0..2], opcode);
+        LittleEndian::write_u16(&mut buffer[0..2], opcode.into());
         LittleEndian::write_u16(&mut buffer[2..4], index);
         let size = data.len() as u16;
         LittleEndian::write_u16(&mut buffer[4..MGMT_BUFFER_SIZE], size);
