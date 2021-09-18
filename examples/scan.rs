@@ -220,7 +220,11 @@ impl Scanner {
                     print!(" power {}", eir.data[0] as i8);
                 }
                 eir::DataType::ManufacturerData => {
-                    print!(" mfg");
+                    let mfg = LittleEndian::read_u16(&eir.data[0..2]);
+                    print!(" mfg {:04x} ", mfg);
+                    for b in &eir.data[2..] {
+                        print!("{:02x}", b);
+                    }
                 }
                 eir::DataType::Appearance => {
                     if eir.data.len() == 2 {
