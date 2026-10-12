@@ -1,9 +1,9 @@
 use byteorder::{ByteOrder, LittleEndian};
 
 use crate::{
+    Error, OperationId, Status,
     error::{HciError, HciErrorKind},
     pack::Unpack,
-    Error, OperationId, Status,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq)]

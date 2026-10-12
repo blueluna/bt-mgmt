@@ -1,5 +1,3 @@
-use crate::extended_enum_other;
-
 extended_enum_other!(Status, u8,
     Success => 0x00,
     UnknownCommand => 0x01,

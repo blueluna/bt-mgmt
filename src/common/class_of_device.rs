@@ -3,9 +3,12 @@
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ClassOfDevice(u32);
 
-use crate::{error::HciError, error::HciErrorKind, pack::UnpackFixed, Error};
+use bitflags::bitflags;
+
+use crate::{Error, error::HciError, error::HciErrorKind, pack::UnpackFixed};
 
 bitflags!(
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord)]
     pub struct MajorServiceClass: u32 {
         const LIMITED_DISCOVERABLE = 0b0000_0000_0010_0000_0000_0000;
         const RESERVED1            = 0b0000_0000_0100_0000_0000_0000;

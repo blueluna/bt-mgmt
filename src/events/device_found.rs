@@ -1,6 +1,6 @@
 use byteorder::{ByteOrder, LittleEndian};
 
-use crate::{error::HciError, error::HciErrorKind, pack::UnpackFixed, AddressInfo, Error};
+use crate::{AddressInfo, Error, error::HciError, error::HciErrorKind, pack::UnpackFixed};
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct DeviceFound<'a> {

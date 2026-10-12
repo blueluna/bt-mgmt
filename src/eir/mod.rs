@@ -1,11 +1,11 @@
 use crate::extended_enum_other;
-/// Extended Inquiry Response (EIR)
-///
-///
+// Extended Inquiry Response (EIR)
+//
+//
 // use byteorder::{ByteOrder, LittleEndian};
 
 // Reference, https://www.bluetooth.com/specifications/assigned-numbers/generic-access-profile/
-use crate::{error::HciError, error::HciErrorKind, Error};
+use crate::{Error, error::HciError, error::HciErrorKind};
 
 extended_enum_other!(DataType, u8,
     Flags => 0x01,

@@ -1,6 +1,3 @@
-#[macro_use]
-extern crate bitflags;
-
 mod address_info;
 mod common;
 pub mod eir;

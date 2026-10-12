@@ -1,16 +1,14 @@
-use std::fmt;
 use std::os::unix::io::AsRawFd;
 
-use mio::{unix::SourceFd, Events, Interest, Poll, Token};
+use mio::{Events, Interest, Poll, Token, unix::SourceFd};
 
 use byteorder::{ByteOrder, LittleEndian};
 
 use bt_mgmt::{
-    self,
+    self, Error, Socket,
     eir::{self, EirEntry},
     events::Event,
     pack::UnpackFixed,
-    Error, Socket,
 };
 
 const MGMT_EVENTS: Token = Token(0);
@@ -67,10 +65,6 @@ fn main() -> Result<(), Error> {
                                                 bt_mgmt::Appearance::from(appearance_identifier);
                                             match appearance {
                                                 bt_mgmt::Appearance::Reserved => {
-                                                    fmt::format(format_args!(
-                                                        "Hello, {}!",
-                                                        "world"
-                                                    ));
                                                     print!(
                                                         " appearance reserved {:04x}",
                                                         appearance_identifier

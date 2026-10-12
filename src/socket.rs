@@ -29,7 +29,7 @@ impl Socket {
         index: u16,
         data: &[u8],
     ) -> Result<usize> {
-        assert!(data.len() < u16::max_value() as usize);
+        assert!(data.len() < u16::MAX as usize);
         let end = MGMT_HEADER_SIZE + data.len();
         assert!(end < MGMT_BUFFER_SIZE);
         let mut buffer = [0u8; MGMT_BUFFER_SIZE];

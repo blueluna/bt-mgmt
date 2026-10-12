@@ -1,19 +1,17 @@
-use std::fmt;
 use std::os::unix::io::AsRawFd;
 use std::time::Duration;
 
-use mio::{unix::SourceFd, Events, Interest, Poll, Token};
+use mio::{Events, Interest, Poll, Token, unix::SourceFd};
 
 use timerfd::{ClockId, SetTimeFlags, TimerFd, TimerState};
 
 use byteorder::{ByteOrder, LittleEndian};
 
 use bt_mgmt::{
-    self,
+    self, ClassOfDevice, Error, HardwareAddress, OperationId, Socket, Status,
     eir::{self, EirEntry},
     events::{self, EventId},
     pack::{Unpack, UnpackFixed},
-    ClassOfDevice, Error, HardwareAddress, OperationId, Socket, Status,
 };
 
 const MGMT_EVENTS: Token = Token(0);
@@ -162,7 +160,7 @@ impl Scanner {
                 if (data.len() - offset) >= octets {
                     let indicies: Vec<u16> = data[offset..offset + octets]
                         .chunks_exact(2)
-                        .map(|c| LittleEndian::read_u16(c))
+                        .map(LittleEndian::read_u16)
                         .collect();
                     println!("Index List, {:?}", indicies);
                     if self.mgmt_index > 0x7fff && indicies.len() == 1 {
@@ -232,7 +230,6 @@ impl Scanner {
                         let appearance = bt_mgmt::Appearance::from(appearance_identifier);
                         match appearance {
                             bt_mgmt::Appearance::Reserved => {
-                                fmt::format(format_args!("Hello, {}!", "world"));
                                 print!(" appearance reserved {:04x}", appearance_identifier);
                             }
                             _ => {

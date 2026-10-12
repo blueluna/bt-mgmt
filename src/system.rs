@@ -1,4 +1,3 @@
-use libc;
 use std::io;
 use std::mem::size_of;
 use std::os::unix::io::RawFd;

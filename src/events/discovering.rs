@@ -1,7 +1,8 @@
-use crate::{error::HciError, error::HciErrorKind, pack::UnpackFixed, Error};
-use bitflags;
+use crate::{Error, error::HciError, error::HciErrorKind, pack::UnpackFixed};
+use bitflags::bitflags;
 
 bitflags!(
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord)]
     pub struct DiscoveringType: u8 {
         const BR_EDR = 0b0001;
         const LE_PUBLIC = 0b0010;

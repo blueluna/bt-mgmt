@@ -26,12 +26,12 @@ macro_rules! extended_enum {
         }
 
         impl TryFrom<$ty> for $name {
-            type Error = crate::error::Error;
+            type Error = $crate::error::Error;
 
             fn try_from(value: $ty) -> Result<Self, Self::Error> {
                 match value {
                     $( $val => Ok($name::$var),)*
-                    _ => Err(Self::Error::from(crate::error::HciError::new(crate::error::HciErrorKind::InvalidValue))),
+                    _ => Err(Self::Error::from($crate::error::HciError::new($crate::error::HciErrorKind::InvalidValue))),
                 }
             }
         }

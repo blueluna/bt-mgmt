@@ -4,7 +4,7 @@ use std::fmt;
 use crate::extended_enum;
 use crate::hardware_address::HardwareAddress;
 
-use crate::{error::HciError, error::HciErrorKind, pack::UnpackFixed, Error};
+use crate::{Error, error::HciError, error::HciErrorKind, pack::UnpackFixed};
 
 // Basic Rate / Enhanced Data Rate (BR/EDR)
 //

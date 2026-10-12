@@ -5,19 +5,20 @@ mod discovering;
 use byteorder::{ByteOrder, LittleEndian};
 
 use crate::{
+    ClassOfDevice, Error,
     error::{HciError, HciErrorKind},
     extended_enum_other,
     pack::{Unpack, UnpackFixed},
-    ClassOfDevice, Error,
 };
 
 pub use command::{CommandComplete, CommandStatus};
 pub use device_found::DeviceFound;
 pub use discovering::{Discovering, DiscoveringType};
 
-use bitflags;
+use bitflags::bitflags;
 
 bitflags!(
+    #[derive(Clone, Copy, Debug, Eq, PartialEq, Hash, PartialOrd, Ord)]
     pub struct Settings: u32 {
         const POWERED = 0x0000_0001;
         const CONNECTABLE = 0x0000_0002;
@@ -139,7 +140,7 @@ impl<'a> Event<'a> {
                 let event = Discovering::unpack(&data[..2])?;
                 Ok((Event::Discovering(event), 2))
             }
-            _ => Ok((Event::Other((event_id, &data)), data.len())),
+            _ => Ok((Event::Other((event_id, data)), data.len())),
         }
     }
 }
